@@ -13,6 +13,7 @@ package darwin
 #include <stdlib.h>
 */
 import "C"
+
 import (
 	"log"
 	"runtime"
@@ -31,6 +32,8 @@ func init() {
 
 type Window struct {
 	context unsafe.Pointer
+
+	applicationMenu *menu.Menu
 }
 
 func bool2Cint(value bool) C.int {
@@ -40,8 +43,12 @@ func bool2Cint(value bool) C.int {
 	return C.int(0)
 }
 
-func NewWindow(frontendOptions *options.App, debugMode bool) *Window {
+func bool2CboolPtr(value bool) *C.bool {
+	v := C.bool(value)
+	return &v
+}
 
+func NewWindow(frontendOptions *options.App, debug bool, devtools bool) *Window {
 	c := NewCalloc()
 	defer c.Free()
 
@@ -51,11 +58,14 @@ func NewWindow(frontendOptions *options.App, debugMode bool) *Window {
 	alwaysOnTop := bool2Cint(frontendOptions.AlwaysOnTop)
 	hideWindowOnClose := bool2Cint(frontendOptions.HideWindowOnClose)
 	startsHidden := bool2Cint(frontendOptions.StartHidden)
-	debug := bool2Cint(debugMode)
+	devtoolsEnabled := bool2Cint(devtools)
+	defaultContextMenuEnabled := bool2Cint(debug || frontendOptions.EnableDefaultContextMenu)
+	singleInstanceEnabled := bool2Cint(frontendOptions.SingleInstanceLock != nil)
 
-	var fullSizeContent, hideTitleBar, hideTitle, useToolbar, webviewIsTransparent C.int
+	var fullSizeContent, hideTitleBar, zoomable, hideTitle, useToolbar, webviewIsTransparent C.int
 	var titlebarAppearsTransparent, hideToolbarSeparator, windowIsTranslucent C.int
 	var appearance, title *C.char
+	var preferences C.struct_Preferences
 
 	width := C.int(frontendOptions.Width)
 	height := C.int(frontendOptions.Height)
@@ -67,7 +77,16 @@ func NewWindow(frontendOptions *options.App, debugMode bool) *Window {
 
 	title = c.String(frontendOptions.Title)
 
+	singleInstanceUniqueIdStr := ""
+	if frontendOptions.SingleInstanceLock != nil {
+		singleInstanceUniqueIdStr = frontendOptions.SingleInstanceLock.UniqueId
+	}
+	singleInstanceUniqueId := c.String(singleInstanceUniqueIdStr)
+
 	enableFraudulentWebsiteWarnings := C.bool(frontendOptions.EnableFraudulentWebsiteDetection)
+
+	enableDragAndDrop := C.bool(frontendOptions.DragAndDrop != nil && frontendOptions.DragAndDrop.EnableFileDrop)
+	disableWebViewDragAndDrop := C.bool(frontendOptions.DragAndDrop != nil && frontendOptions.DragAndDrop.DisableWebViewDrop)
 
 	if frontendOptions.Mac != nil {
 		mac := frontendOptions.Mac
@@ -79,15 +98,34 @@ func NewWindow(frontendOptions *options.App, debugMode bool) *Window {
 			titlebarAppearsTransparent = bool2Cint(mac.TitleBar.TitlebarAppearsTransparent)
 			hideToolbarSeparator = bool2Cint(mac.TitleBar.HideToolbarSeparator)
 		}
+
+		if mac.Preferences != nil {
+			if mac.Preferences.TabFocusesLinks.IsSet() {
+				preferences.tabFocusesLinks = bool2CboolPtr(mac.Preferences.TabFocusesLinks.Get())
+			}
+
+			if mac.Preferences.TextInteractionEnabled.IsSet() {
+				preferences.textInteractionEnabled = bool2CboolPtr(mac.Preferences.TextInteractionEnabled.Get())
+			}
+
+			if mac.Preferences.FullscreenEnabled.IsSet() {
+				preferences.fullscreenEnabled = bool2CboolPtr(mac.Preferences.FullscreenEnabled.Get())
+			}
+		}
+
+		zoomable = bool2Cint(!frontendOptions.Mac.DisableZoom)
+
 		windowIsTranslucent = bool2Cint(mac.WindowIsTranslucent)
 		webviewIsTransparent = bool2Cint(mac.WebviewIsTransparent)
 
 		appearance = c.String(string(mac.Appearance))
 	}
-	var context *C.WailsContext = C.Create(title, width, height, frameless, resizable, fullscreen, fullSizeContent,
+	var context *C.WailsContext = C.Create(title, width, height, frameless, resizable, zoomable, fullscreen, fullSizeContent,
 		hideTitleBar, titlebarAppearsTransparent, hideTitle, useToolbar, hideToolbarSeparator, webviewIsTransparent,
-		alwaysOnTop, hideWindowOnClose, appearance, windowIsTranslucent, debug, windowStartState, startsHidden,
-		minWidth, minHeight, maxWidth, maxHeight, enableFraudulentWebsiteWarnings)
+		alwaysOnTop, hideWindowOnClose, appearance, windowIsTranslucent, devtoolsEnabled, defaultContextMenuEnabled,
+		windowStartState, startsHidden, minWidth, minHeight, maxWidth, maxHeight, enableFraudulentWebsiteWarnings,
+		preferences, singleInstanceEnabled, singleInstanceUniqueId, enableDragAndDrop, disableWebViewDragAndDrop,
+	)
 
 	// Create menu
 	result := &Window{
@@ -114,7 +152,7 @@ func NewWindow(frontendOptions *options.App, debugMode bool) *Window {
 		result.SetApplicationMenu(frontendOptions.Menu)
 	}
 
-	if debugMode && frontendOptions.Debug.OpenInspectorOnStartup {
+	if debug && frontendOptions.Debug.OpenInspectorOnStartup {
 		showInspector(result.context)
 	}
 	return result
@@ -165,6 +203,7 @@ func (w *Window) SetTitle(title string) {
 func (w *Window) Maximise() {
 	C.Maximise(w.context)
 }
+
 func (w *Window) ToggleMaximise() {
 	C.ToggleMaximise(w.context)
 }
@@ -220,6 +259,7 @@ func (w *Window) Show() {
 func (w *Window) Hide() {
 	C.Hide(w.context)
 }
+
 func (w *Window) ShowApplication() {
 	C.ShowApplication(w.context)
 }
@@ -254,11 +294,19 @@ func (w *Window) Size() (int, int) {
 }
 
 func (w *Window) SetApplicationMenu(inMenu *menu.Menu) {
-	mainMenu := NewNSMenu(w.context, "")
-	processMenu(mainMenu, inMenu)
-	C.SetAsApplicationMenu(w.context, mainMenu.nsmenu)
+	w.applicationMenu = inMenu
+	w.UpdateApplicationMenu()
 }
 
 func (w *Window) UpdateApplicationMenu() {
+	mainMenu := NewNSMenu(w.context, "")
+	if w.applicationMenu != nil {
+		processMenu(mainMenu, w.applicationMenu)
+	}
+	C.SetAsApplicationMenu(w.context, mainMenu.nsmenu)
 	C.UpdateApplicationMenu(w.context)
+}
+
+func (w Window) Print() {
+	C.WindowPrint(w.context)
 }
