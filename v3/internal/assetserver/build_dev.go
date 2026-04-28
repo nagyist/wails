@@ -87,7 +87,7 @@ func NewAssetFileServer(vfs fs.FS) http.Handler {
 				return dialer.DialContext(ctx, network, addr)
 			},
 		},
-		maxRetries: 3,
+		maxRetries: 50,
 		delay:      50 * time.Millisecond,
 	}
 	proxy.ErrorHandler = func(rw http.ResponseWriter, r *http.Request, err error) {
