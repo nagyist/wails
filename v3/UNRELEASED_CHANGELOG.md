@@ -29,6 +29,7 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Removed
 <!-- Features removed in this release -->
+- Remove shell test scripts for various testing purposes in [PR](https://github.com/wailsapp/wails/pull/5267) by @leaanthony
 - Delete v3-alpha documentation deployment workflow and CNAME record in [PR](https://github.com/wailsapp/wails/pull/5266) by @leaanthony
 
 ## Security
