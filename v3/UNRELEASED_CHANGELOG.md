@@ -21,6 +21,7 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Changed
 <!-- Changes in existing functionality -->
+- Release task defaults to master branch and updates changelog wording in [PR](https://github.com/wailsapp/wails/pull/5283) by @leaanthony
 - Update auto-changelog workflow to use the latest version in [PR](https://github.com/wailsapp/wails/pull/5282) by @leaanthony
 - Improve workflow efficiency by adding path filters and removing dead workflows in [PR](https://github.com/wailsapp/wails/pull/5280) by @leaanthony
 - Update documentation to reference master branch for example links in [PR](https://github.com/wailsapp/wails/pull/5274) by @leaanthony
