@@ -17,6 +17,9 @@ on:
     # Run at 2 AM UTC every day - DISABLED for safety until ready
     # - cron: '0 2 * * *'
 
+permissions:
+  contents: read
+
 env:
   GO_VERSION: '1.24'
 
