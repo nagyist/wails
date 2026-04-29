@@ -1,6 +1,9 @@
 on:
   push:
     branches: ['master']
+    paths:
+      - 'v3/internal/runtime/desktop/@wailsio/runtime/**'
+      - '.github/workflows/publish-npm.yml'
   workflow_dispatch:
 
 concurrency:

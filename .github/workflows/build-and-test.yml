@@ -3,6 +3,9 @@ name: Build + Test v2
 on:
   push:
     branches: [release/*, master, bugfix/*]
+    paths:
+      - 'v2/**'
+      - '.github/workflows/build-and-test.yml'
   workflow_dispatch:
 
 jobs:
