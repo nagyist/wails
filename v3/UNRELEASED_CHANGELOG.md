@@ -17,6 +17,7 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Added
 <!-- New features, capabilities, or enhancements -->
+- Grant actions: write permission to trigger-release job in [PR](https://github.com/wailsapp/wails/pull/5270) by @leaanthony
 
 ## Changed
 <!-- Changes in existing functionality -->
