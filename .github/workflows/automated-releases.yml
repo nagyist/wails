@@ -23,6 +23,9 @@ permissions:
 env:
   GO_VERSION: '1.24'
 
+permissions:
+  contents: read
+
 jobs:
   check-permissions:
     name: Check Release Permissions
@@ -142,6 +145,8 @@ jobs:
 
   release-v2:
     name: Create v2 Release
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     needs: [check-permissions, detect-v2-changes]
     if: |
@@ -234,6 +239,8 @@ jobs:
 
   release-v3:
     name: Create v3-alpha Release
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     needs: [check-permissions, detect-v3-changes]
     if: |
