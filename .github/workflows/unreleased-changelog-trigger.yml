@@ -3,7 +3,7 @@ name: Auto Release on Changelog Update
 on:
   push:
     branches:
-      - v3-alpha
+      - master
     paths:
       - 'v3/UNRELEASED_CHANGELOG.md'
   workflow_dispatch:
@@ -47,7 +47,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: v3-alpha
+          ref: master
           fetch-depth: 0
           token: ${{ secrets.WAILS_REPO_TOKEN || github.token }}
 
@@ -83,7 +83,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'nightly-release-v3.yml',
-              ref: 'v3-alpha',
+              ref: 'master',
               inputs: {
                 force_release: 'true',
                 dry_run: '${{ github.event.inputs.dry_run || "false" }}'
