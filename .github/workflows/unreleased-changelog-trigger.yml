@@ -23,7 +23,7 @@ jobs:
     name: Trigger v3 nightly release
     runs-on: ubuntu-latest
     # Only run for trusted actors. auto-changelog-v3 commits as github-actions[bot].
-    if: contains(fromJSON('["leaanthony", "github-actions[bot]"]'), github.actor)
+    if: github.actor == 'leaanthony' || github.actor == 'github-actions[bot]'
     steps:
       - name: Check UNRELEASED_CHANGELOG.md has content
         id: check
