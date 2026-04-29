@@ -4,7 +4,6 @@
 package darwin
 
 import (
-	"fmt"
 	"github.com/pkg/browser"
 	"github.com/wailsapp/wails/v2/internal/frontend/utils"
 )
