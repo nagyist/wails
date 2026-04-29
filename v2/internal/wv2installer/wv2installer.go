@@ -4,7 +4,6 @@ package wv2installer
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/wailsapp/go-webview2/webviewloader"
 	"github.com/wailsapp/wails/v2/pkg/options"

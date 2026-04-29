@@ -698,13 +698,13 @@ var edgeMap = map[string]uintptr{
 func (f *Frontend) processMessage(message string, sender *edge.ICoreWebView2, args *edge.ICoreWebView2WebMessageReceivedEventArgs) {
 	topSource, err := sender.GetSource()
 	if err != nil {
-		f.logger.Error(fmt.Sprintf("Unable to get source from sender: %s", err.Error()))
+		f.logger.Error("Unable to get source from sender: %s", err.Error())
 		return
 	}
 
 	senderSource, err := args.GetSource()
 	if err != nil {
-		f.logger.Error(fmt.Sprintf("Unable to get source from args: %s", err.Error()))
+		f.logger.Error("Unable to get source from args: %s", err.Error())
 		return
 	}
 
@@ -759,13 +759,13 @@ func (f *Frontend) processMessage(message string, sender *edge.ICoreWebView2, ar
 func (f *Frontend) processMessageWithAdditionalObjects(message string, sender *edge.ICoreWebView2, args *edge.ICoreWebView2WebMessageReceivedEventArgs) {
 	topSource, err := sender.GetSource()
 	if err != nil {
-		f.logger.Error(fmt.Sprintf("Unable to get source from sender: %s", err.Error()))
+		f.logger.Error("Unable to get source from sender: %s", err.Error())
 		return
 	}
 
 	senderSource, err := args.GetSource()
 	if err != nil {
-		f.logger.Error(fmt.Sprintf("Unable to get source from args: %s", err.Error()))
+		f.logger.Error("Unable to get source from args: %s", err.Error())
 		return
 	}
 
@@ -835,7 +835,7 @@ func (f *Frontend) processMessageWithAdditionalObjects(message string, sender *e
 func (f *Frontend) validBindingOrigin(source string) bool {
 	origin, err := f.originValidator.GetOriginFromURL(source)
 	if err != nil {
-		f.logger.Error(fmt.Sprintf("Error parsing source URL %s: %v", source, err.Error()))
+		f.logger.Error("Error parsing source URL %s: %v", source, err.Error())
 		return false
 	}
 	allowed := f.originValidator.IsOriginAllowed(origin)
