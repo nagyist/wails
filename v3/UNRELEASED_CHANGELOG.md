@@ -20,7 +20,6 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Changed
 <!-- Changes in existing functionality -->
-- Update documentation dependencies and content collection loaders in [PR](https://github.com/wailsapp/wails/pull/5285) by @leaanthony
 
 ## Fixed
 <!-- Bug fixes -->
