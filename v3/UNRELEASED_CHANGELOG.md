@@ -27,6 +27,7 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Fixed
 <!-- Bug fixes -->
+- Enhance reverse proxy with retry logic and IPv4 forcing for development in [PR](https://github.com/wailsapp/wails/pull/5265) by @AkagiYui
 - Rewrite unreleased changelog trigger workflow in [PR](https://github.com/wailsapp/wails/pull/5281) by @leaanthony
 
 ## Deprecated
