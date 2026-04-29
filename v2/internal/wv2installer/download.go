@@ -4,6 +4,7 @@
 package wv2installer
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/wailsapp/wails/v2/internal/webview2runtime"
@@ -20,7 +21,7 @@ func doInstallationStrategy(installStatus installationStatus, messages *windows.
 		return err
 	}
 	if !confirmed {
-		return fmt.Errorf(messages.Webview2NotInstalled)
+		return errors.New(messages.Webview2NotInstalled)
 	}
 	installedCorrectly, err := webview2runtime.InstallUsingBootstrapper()
 	if err != nil {

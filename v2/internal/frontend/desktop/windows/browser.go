@@ -21,7 +21,7 @@ var fallbackBrowserPaths = []string{
 func (f *Frontend) BrowserOpenURL(rawURL string) {
 	url, err := utils.ValidateAndSanitizeURL(rawURL)
 	if err != nil {
-		f.logger.Error(fmt.Sprintf("Invalid URL %s", err.Error()))
+		f.logger.Error("Invalid URL %s", err.Error())
 		return
 	}
 
