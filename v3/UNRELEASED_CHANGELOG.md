@@ -23,6 +23,7 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Changed
 <!-- Changes in existing functionality -->
+- Update sponsors SVG in [PR](https://github.com/wailsapp/wails/pull/5308) by @github-actions[bot]
 - Update icon generation command to handle unsupported platforms in [PR](https://github.com/wailsapp/wails/pull/5309) by @leaanthony
 - Replace boolean fullscreen API with tri-state ButtonState, implement platform bindings in [PR](https://github.com/wailsapp/wails/pull/5224) by @leaanthony
 
