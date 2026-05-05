@@ -17,6 +17,7 @@ After processing, the content will be moved to the main changelog and this file 
 
 ## Added
 <!-- New features, capabilities, or enhancements -->
+- Add PR template URL to the repository in [PR](https://github.com/wailsapp/wails/pull/5179) by @leaanthony
 - Add German documentation for Wails v3 in [PR](https://github.com/wailsapp/wails/pull/5330) by @leaanthony
 
 ## Changed
